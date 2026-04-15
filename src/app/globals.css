@@ -128,3 +128,284 @@
     @apply font-sans;
   }
 }
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+/* ==========================================
+   CCM MAROC — PREMIUM TYPOGRAPHY & MOTION
+   ========================================== */
+
+/* Base type scale - balanced readability */
+html {
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  font-feature-settings: "ss01", "ss02", "cv11";
+  letter-spacing: -0.01em;
+}
+
+/* Editorial display class - use with Instrument Serif italic for accents */
+.font-editorial {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Fluid display typography — tuned for viewport fit */
+.text-display {
+  font-size: clamp(2.25rem, 5.5vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.text-display-sm {
+  font-size: clamp(1.875rem, 4vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+/* Eyebrow refined */
+.eyebrow {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f59e0b;
+}
+
+/* Scroll reveal - triggered when element enters viewport */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Ambient amber glow for hero */
+@keyframes ambient-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.ambient-glow {
+  animation: ambient-pulse 8s ease-in-out infinite;
+}
+
+/* Sprocket holes rotation */
+@keyframes reel-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-reel {
+  animation: reel-spin 20s linear infinite;
+}
+
+/* Film strip scroll */
+@keyframes filmstrip {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-filmstrip {
+  animation: filmstrip 30s linear infinite;
+}
+
+/* Timecode pulse */
+@keyframes timecode-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.3;
+  }
+}
+
+.animate-blink {
+  animation: timecode-blink 1.5s steps(1) infinite;
+}
+
+/* Shimmer for loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 158, 11, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Marquee — slower, smoother */
+.animate-marquee {
+  animation: marquee 60s linear infinite;
+}
+
+/* Magnetic button wrapper */
+.magnetic {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Premium selection */
+::selection {
+  background: #fde68a;
+  color: #09090b;
+}
+
+/* Focus ring amber */
+*:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ==========================================
+   PROSE-PLATEAU — editorial article body
+   ========================================== */
+.prose-plateau {
+  color: #d4d4d8; /* zinc-300 */
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.prose-plateau p {
+  font-size: 1.0625rem;
+  color: #e4e4e7; /* zinc-200 */
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.prose-plateau h2 {
+  font-size: 1.875rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: #fafafa; /* zinc-50 */
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.prose-plateau h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #fafafa;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.prose-plateau blockquote {
+  border-left: 2px solid #f59e0b;
+  padding-left: 1.5rem;
+  margin: 2.5rem 0;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: #fafafa;
+  letter-spacing: -0.02em;
+}
+
+.prose-plateau a {
+  color: #f59e0b;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-plateau a:hover {
+  color: #fbbf24;
+}
+
+.prose-plateau ul,
+.prose-plateau ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #e4e4e7;
+}
+
+.prose-plateau li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}
+
+.prose-plateau ul li {
+  list-style-type: disc;
+}
+
+.prose-plateau ol li {
+  list-style-type: decimal;
+}
+
+.prose-plateau strong {
+  font-weight: 600;
+  color: #fafafa;
+}
+
+.prose-plateau em {
+  font-style: italic;
+}
+
+.prose-plateau hr {
+  border: none;
+  border-top: 1px solid #27272a;
+  margin: 3rem 0;
+}
