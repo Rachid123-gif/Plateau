@@ -8,10 +8,10 @@ interface LogoProps {
 }
 
 const SIZES = {
-  sm: { mark: "h-4", text: "text-sm", gap: "gap-2" },
-  md: { mark: "h-5", text: "text-base", gap: "gap-2.5" },
-  lg: { mark: "h-7", text: "text-xl", gap: "gap-3" },
-  xl: { mark: "h-10", text: "text-3xl", gap: "gap-4" },
+  sm: { mark: "h-5", text: "text-base", gap: "gap-2" },
+  md: { mark: "h-7", text: "text-lg", gap: "gap-2.5" },
+  lg: { mark: "h-9", text: "text-2xl", gap: "gap-3" },
+  xl: { mark: "h-12", text: "text-4xl", gap: "gap-4" },
 };
 
 /**

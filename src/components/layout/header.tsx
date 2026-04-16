@@ -85,7 +85,7 @@ export function Header({ user }: HeaderProps) {
           : "bg-transparent border-b border-transparent"
       )}
     >
-      <div className="container mx-auto max-w-[1480px] flex h-16 items-center justify-between px-6 lg:px-10">
+      <div className="container mx-auto max-w-[1480px] flex h-20 items-center justify-between px-6 lg:px-10">
         {/* Logo */}
         <Link
           href="/"
@@ -107,7 +107,7 @@ export function Header({ user }: HeaderProps) {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative px-5 py-2 text-[15px] font-medium rounded-lg transition-colors",
+                  "relative px-5 py-2.5 text-base font-medium rounded-lg transition-colors",
                   active
                     ? "text-zinc-50"
                     : "text-zinc-400 hover:text-zinc-50"
@@ -138,7 +138,7 @@ export function Header({ user }: HeaderProps) {
               <Link
                 href="/admin"
                 className={cn(
-                  "relative px-5 py-2 text-[15px] font-medium rounded-lg transition-colors inline-flex items-center gap-1.5",
+                  "relative px-5 py-2.5 text-base font-medium rounded-lg transition-colors inline-flex items-center gap-1.5",
                   pathname.startsWith("/admin")
                     ? "text-amber-500"
                     : "text-zinc-400 hover:text-amber-500"
@@ -156,9 +156,9 @@ export function Header({ user }: HeaderProps) {
           <Link
             href="/annuaire"
             aria-label="Rechercher"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-50 hover:bg-zinc-900 transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-50 hover:bg-zinc-900 transition-colors"
           >
-            <MagnifyingGlass weight="regular" className="h-4 w-4" />
+            <MagnifyingGlass weight="regular" className="h-5 w-5" />
           </Link>
 
           {user ? (
@@ -256,19 +256,19 @@ export function Header({ user }: HeaderProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-1.5 ml-1">
+            <div className="flex items-center gap-2 ml-1">
               <Link
                 href="/connexion"
-                className="px-4 py-2 text-[13px] font-medium text-zinc-300 hover:text-zinc-50 transition-colors rounded-lg"
+                className="px-4 py-2.5 text-base font-medium text-zinc-300 hover:text-zinc-50 transition-colors rounded-lg"
               >
                 Connexion
               </Link>
               <Link
                 href="/inscription"
-                className="inline-flex items-center gap-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 px-4 py-2 text-[13px] font-semibold transition-all hover:-translate-y-[1px] shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_8px_20px_-8px_rgba(245,158,11,0.5)]"
+                className="inline-flex items-center gap-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 px-5 py-2.5 text-base font-semibold transition-all hover:-translate-y-[1px] shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_8px_20px_-8px_rgba(245,158,11,0.5)]"
               >
                 Inscription
-                <ArrowUpRight weight="bold" className="h-3.5 w-3.5" />
+                <ArrowUpRight weight="bold" className="h-4 w-4" />
               </Link>
             </div>
           )}
