@@ -10,11 +10,11 @@ export default async function DashboardLayout({
   const user = await requireAuth();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-zinc-950">
       <Header user={user} />
       <div className="flex flex-1">
         <DashboardSidebar />
-        <main className="flex-1 overflow-auto bg-gray-50">
+        <main className="flex-1 overflow-auto bg-zinc-950">
           {children}
         </main>
       </div>

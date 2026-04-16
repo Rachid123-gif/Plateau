@@ -18,7 +18,7 @@ export const metadata = {
     "Portraits, guides métiers, actualités et coulisses du cinéma marocain. La revue éditoriale de Plateau.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 const PAGE_SIZE = 9;
 

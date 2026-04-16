@@ -10,11 +10,11 @@ export default async function AdminLayout({
   const user = await requireAdminOrModerator();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-zinc-950">
       <Header user={user} />
       <div className="flex flex-1">
         <AdminSidebar />
-        <main className="flex-1 overflow-auto bg-gray-50">
+        <main className="flex-1 overflow-auto bg-zinc-950 text-zinc-50">
           {children}
         </main>
       </div>

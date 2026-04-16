@@ -1,3 +1,5 @@
+export const revalidate = 600;
+
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";

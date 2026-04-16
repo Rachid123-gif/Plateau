@@ -30,17 +30,19 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 min-h-screen border-r border-zinc-200 bg-[#fafaf9] p-4">
-      <div className="mb-6">
+    <aside className="w-64 min-h-screen border-r border-zinc-800 bg-zinc-950 p-4">
+      <div className="mb-6 px-2">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-950 mb-4 transition-colors"
+          className="flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-zinc-300 mb-6 transition-colors"
         >
-          <ArrowLeft weight="regular" className="h-4 w-4" />
+          <ArrowLeft weight="regular" className="h-3.5 w-3.5" />
           Retour au site
         </Link>
-        <h2 className="text-base font-semibold text-zinc-950">Administration</h2>
-        <p className="text-xs text-zinc-500">Backoffice</p>
+        <h2 className="text-xs uppercase tracking-[0.18em] font-mono text-amber-500 font-medium">
+          // Administration
+        </h2>
+        <p className="text-sm text-zinc-400 mt-2">Backoffice</p>
       </div>
 
       <nav className="space-y-0.5">
@@ -54,10 +56,10 @@ export function AdminSidebar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors hover:-translate-y-[1px]",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all",
                 isActive
-                  ? "bg-zinc-950 text-white"
-                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
+                  ? "bg-amber-500 text-zinc-950 font-semibold"
+                  : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-50"
               )}
             >
               <Icon weight={isActive ? "duotone" : "regular"} className="h-4 w-4 shrink-0" />

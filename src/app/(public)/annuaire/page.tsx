@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { Suspense } from "react";
 import Link from "next/link";
 import {
@@ -14,7 +16,7 @@ import type { SearchResult } from "@/types";
 type AvailabilityStatus = "AVAILABLE" | "BUSY" | "UNAVAILABLE";
 type ExperienceLevel = "STUDENT" | "JUNIOR" | "INTERMEDIATE" | "SENIOR" | "EXPERT";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 
 const AVAILABILITY_OPTIONS: { value: string; label: string }[] = [
   { value: "AVAILABLE", label: "Disponible" },
@@ -116,21 +118,32 @@ async function getProfiles(params: Awaited<AnnuairePageProps["searchParams"]>): 
     };
   }
 
+  // Sort: AVAILABLE first, then verified, then most viewed
+  const orderBy = params.disponibilite
+    ? [{ viewCount: "desc" as const }, { updatedAt: "desc" as const }]
+    : [
+        { availabilityStatus: "asc" as const },
+        { verificationStatus: "asc" as const },
+        { viewCount: "desc" as const },
+      ];
+
   const [profiles, total] = await Promise.all([
     prisma.profile.findMany({
       where,
       skip,
       take: PAGE_SIZE,
-      orderBy: [{ verificationStatus: "asc" }, { viewCount: "desc" }, { createdAt: "desc" }],
+      orderBy,
       include: {
-        primaryProfession: true,
+        primaryProfession: { select: { id: true, name: true, slug: true } },
         skills: {
           include: { skill: { select: { id: true, name: true } } },
-          take: 5,
+          take: 3,
         },
         languages: {
           include: { language: { select: { id: true, name: true, code: true } } },
+          take: 3,
         },
+        _count: { select: { portfolio: true } },
       },
     }) as unknown as import("@/types").ProfileCard[],
     prisma.profile.count({ where }),
@@ -205,21 +218,22 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
 
   return (
     <div className="bg-zinc-950 min-h-[100dvh]">
-      {/* ── Hero ── */}
-      <section className="border-b border-zinc-800 py-24 lg:py-32">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="eyebrow mb-8">// Annuaire — MMXXVI</div>
+      {/* ── Hero compact ── */}
+      <section className="border-b border-zinc-800 py-12 lg:py-16">
+        <div className="container mx-auto px-6 max-w-[1480px]">
+          <div className="flex items-baseline justify-between mb-6 gap-4 flex-wrap">
+            <div className="eyebrow">// Annuaire — MMXXVI</div>
+            <span className="text-sm font-mono text-zinc-500 tabular-nums">
+              {total.toLocaleString("fr-FR")} profil{total !== 1 ? "s" : ""} référencé{total !== 1 ? "s" : ""}
+            </span>
+          </div>
           <h1 className="text-display-sm max-w-4xl text-zinc-50">
-            L&apos;index des professionnels{" "}
-            <span className="font-editorial text-amber-500">du cinéma.</span>
+            Trouvez le talent pour votre{" "}
+            <span className="font-editorial text-amber-500">prochaine production.</span>
           </h1>
-          <p className="text-xl text-zinc-400 leading-[1.55] max-w-2xl mt-8 mb-10">
-            Découvrez les talents du cinéma marocain — acteurs, réalisateurs, techniciens,
-            scénaristes et bien plus. Filtrez par métier, ville ou disponibilité.
-          </p>
 
-          {/* Search form */}
-          <form action="/annuaire" method="GET" className="flex gap-0 max-w-2xl">
+          {/* Search form — prominent */}
+          <form action="/annuaire" method="GET" className="flex gap-0 max-w-3xl mt-10">
             {sp.profession && <input type="hidden" name="profession" value={sp.profession} />}
             {sp.ville && <input type="hidden" name="ville" value={sp.ville} />}
             {sp.disponibilite && <input type="hidden" name="disponibilite" value={sp.disponibilite} />}
@@ -229,18 +243,18 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
             <div className="relative flex-1">
               <MagnifyingGlass
                 weight="bold"
-                className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 pointer-events-none"
+                className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500 pointer-events-none"
               />
               <input
                 name="q"
                 defaultValue={sp.q}
-                placeholder="Rechercher par nom, métier…"
+                placeholder="Nom, métier, compétence..."
                 className="w-full h-16 bg-zinc-900 border border-zinc-800 focus:border-amber-500/50 text-zinc-50 placeholder-zinc-500 rounded-full rounded-r-none pl-14 pr-4 text-lg outline-none transition-colors"
               />
             </div>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-full rounded-l-none bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold px-7 h-16 text-base transition-colors shrink-0"
+              className="inline-flex items-center gap-2 rounded-full rounded-l-none bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold px-8 h-16 text-base transition-colors shrink-0"
             >
               Rechercher
             </button>
@@ -248,114 +262,133 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
         </div>
       </section>
 
-      {/* ── Body ── */}
-      <div className="container mx-auto px-6 max-w-7xl py-10">
-        <div className="grid grid-cols-12 gap-8">
-          {/* ── Sidebar ── */}
-          <aside className="col-span-12 lg:col-span-3">
-            <div className="bg-zinc-900 border border-zinc-800/60 rounded-2xl p-5 space-y-7 lg:sticky lg:top-24">
-              {/* Section helper */}
-              {[
-                {
-                  title: "Métier",
-                  items: professions.map((p) => ({ value: p.name, label: p.name })),
-                  filterKey: "profession" as const,
-                  currentValue: sp.profession,
-                  scrollable: true,
-                },
-                {
-                  title: "Ville",
-                  items: MOROCCAN_CITIES.map((c) => ({ value: c, label: c })),
-                  filterKey: "ville" as const,
-                  currentValue: sp.ville,
-                  scrollable: false,
-                },
-                {
-                  title: "Disponibilité",
-                  items: AVAILABILITY_OPTIONS,
-                  filterKey: "disponibilite" as const,
-                  currentValue: sp.disponibilite,
-                  scrollable: false,
-                },
-                {
-                  title: "Niveau",
-                  items: EXPERIENCE_OPTIONS,
-                  filterKey: "niveau" as const,
-                  currentValue: sp.niveau,
-                  scrollable: false,
-                },
-                {
-                  title: "Langue",
-                  items: LANGUAGE_OPTIONS,
-                  filterKey: "langue" as const,
-                  currentValue: sp.langue,
-                  scrollable: false,
-                },
-              ].map(({ title, items, filterKey, currentValue, scrollable }) => (
-                <div key={title}>
-                  <p className="eyebrow mb-4">{title}</p>
-                  <div className={`space-y-0.5 ${scrollable ? "max-h-44 overflow-y-auto pr-1" : ""}`}>
-                    {items.map((item) => {
-                      const isActive = currentValue === item.value;
-                      return (
-                        <Link
-                          key={item.value}
-                          href={buildUrl(currentFilters, {
-                            [filterKey]: isActive ? undefined : item.value,
-                            page: undefined,
-                          })}
-                          className={`flex items-center gap-2 px-2 py-2 rounded-lg text-base transition-colors ${
-                            isActive
-                              ? "text-amber-500 font-medium"
-                              : "text-zinc-300 hover:text-zinc-50"
-                          }`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                              isActive ? "bg-amber-500" : "bg-zinc-700"
-                            }`}
-                          />
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
+      {/* ── Sticky filters bar ── */}
+      <div className="sticky top-16 z-40 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800">
+        <div className="container mx-auto px-6 max-w-[1480px] py-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
+            {/* DISPO NOW — leading chip */}
+            <Link
+              href={buildUrl(currentFilters, {
+                disponibilite: sp.disponibilite === "AVAILABLE" ? undefined : "AVAILABLE",
+                page: undefined,
+              })}
+              className={`shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
+                sp.disponibilite === "AVAILABLE"
+                  ? "bg-amber-500 text-zinc-950 shadow-[0_0_0_3px_rgba(245,158,11,0.15)]"
+                  : "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                sp.disponibilite === "AVAILABLE" ? "bg-zinc-950" : "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]"
+              }`} />
+              Disponible maintenant
+            </Link>
+
+            <span className="h-6 w-px bg-zinc-800 mx-2 shrink-0" />
+
+            {/* Profession dropdown-like select */}
+            <select
+              defaultValue={sp.profession ?? ""}
+              onChange={undefined}
+              className="shrink-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-sm rounded-full px-4 py-2 font-medium transition-colors focus:border-amber-500/60 outline-none cursor-pointer"
+              name="profession"
+              form="filter-form"
+            >
+              <option value="">Tous métiers</option>
+              {professions.map((p) => (
+                <option key={p.id} value={p.name}>
+                  {p.name}
+                </option>
               ))}
+            </select>
 
-              {hasActiveFilters && (
+            <select
+              defaultValue={sp.ville ?? ""}
+              className="shrink-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-sm rounded-full px-4 py-2 font-medium transition-colors focus:border-amber-500/60 outline-none cursor-pointer"
+              name="ville"
+              form="filter-form"
+            >
+              <option value="">Toutes villes</option>
+              {MOROCCAN_CITIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+
+            <select
+              defaultValue={sp.niveau ?? ""}
+              className="shrink-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-sm rounded-full px-4 py-2 font-medium transition-colors focus:border-amber-500/60 outline-none cursor-pointer"
+              name="niveau"
+              form="filter-form"
+            >
+              <option value="">Tous niveaux</option>
+              {EXPERIENCE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              defaultValue={sp.langue ?? ""}
+              className="shrink-0 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-sm rounded-full px-4 py-2 font-medium transition-colors focus:border-amber-500/60 outline-none cursor-pointer"
+              name="langue"
+              form="filter-form"
+            >
+              <option value="">Toutes langues</option>
+              {LANGUAGE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+
+            <form id="filter-form" action="/annuaire" method="GET" className="shrink-0">
+              {sp.q && <input type="hidden" name="q" value={sp.q} />}
+              {sp.disponibilite && <input type="hidden" name="disponibilite" value={sp.disponibilite} />}
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 rounded-full bg-zinc-50 hover:bg-zinc-200 text-zinc-950 text-sm font-semibold px-4 py-2 transition-colors"
+              >
+                Appliquer
+              </button>
+            </form>
+
+            {hasActiveFilters && (
+              <Link
+                href="/annuaire"
+                className="shrink-0 text-sm text-zinc-500 hover:text-zinc-200 font-medium px-3 py-2 transition-colors"
+              >
+                Effacer
+              </Link>
+            )}
+          </div>
+
+          {/* Active chips row */}
+          {activeChips.length > 0 && (
+            <div className="flex items-center gap-2 pt-3 overflow-x-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
+              <span className="text-[11px] uppercase tracking-[0.15em] font-mono text-zinc-500 shrink-0">
+                Filtres actifs —
+              </span>
+              {activeChips.map((chip) => (
                 <Link
-                  href="/annuaire"
-                  className="block text-center text-sm font-mono text-zinc-500 hover:text-zinc-300 pt-3 border-t border-zinc-800 transition-colors"
+                  key={chip.removeKey}
+                  href={buildUrl(currentFilters, { [chip.removeKey]: undefined, page: undefined })}
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs px-3 py-1 hover:bg-amber-500/20 transition-colors whitespace-nowrap"
                 >
-                  Réinitialiser les filtres
+                  {chip.label}
+                  <X weight="bold" className="w-3 h-3" />
                 </Link>
-              )}
+              ))}
             </div>
-          </aside>
+          )}
+        </div>
+      </div>
 
-          {/* ── Results ── */}
-          <div className="col-span-12 lg:col-span-9">
-            {/* Above-grid bar */}
-            <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xl font-mono tabular-nums text-zinc-500">
-                  {total.toLocaleString("fr-FR")} résultat{total !== 1 ? "s" : ""}
-                </span>
-
-                {activeChips.map((chip) => (
-                  <Link
-                    key={chip.removeKey}
-                    href={buildUrl(currentFilters, { [chip.removeKey]: undefined, page: undefined })}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs px-3 py-1 hover:bg-amber-500/20 transition-colors"
-                  >
-                    {chip.label}
-                    <X weight="bold" className="w-3 h-3" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-
+      {/* ── Results ── */}
+      <div className="container mx-auto px-6 max-w-[1480px] py-10">
+          <div className="col-span-12 w-full">
             <Suspense fallback={<ProfileGridSkeleton />}>
               {profiles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-28 text-center">
@@ -376,14 +409,14 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {profiles.map((profile, i) => (
                       <div
                         key={profile.id}
                         className="reveal"
-                        style={{ ["--reveal-delay" as string]: `${i * 50}ms` }}
+                        style={{ ["--reveal-delay" as string]: `${i * 40}ms` }}
                       >
-                        <ProfileCard profile={profile} />
+                        <ProfileCard profile={profile} priority={i < 4} />
                       </div>
                     ))}
                   </div>
@@ -431,7 +464,6 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
               )}
             </Suspense>
           </div>
-        </div>
       </div>
     </div>
   );

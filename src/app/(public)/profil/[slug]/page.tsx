@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { ContactButton } from "@/components/profile/contact-button";
 import type {
   ProfileWithRelations,
   Profession,
@@ -243,26 +244,15 @@ export default async function ProfilePage(props: ProfilePageProps) {
 
               {/* CTAs */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                {currentUser ? (
-                  <Link
-                    href={`/dashboard/messages/nouveau?destinataire=${profile.slug}`}
-                    className="inline-flex items-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold px-7 py-4 text-base transition-colors"
-                  >
-                    <PaperPlaneRight weight="bold" className="w-4 h-4" />
-                    Demander un contact
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/connexion?redirect=/profil/${profile.slug}`}
-                    className="inline-flex items-center gap-2 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold px-7 py-4 text-base transition-colors"
-                  >
-                    <PaperPlaneRight weight="bold" className="w-4 h-4" />
-                    Se connecter pour contacter
-                  </Link>
-                )}
+                <ContactButton
+                  receiverId={profile.userId}
+                  receiverName={`${profile.firstName} ${profile.lastName}`}
+                  currentUserRole={currentUser?.role ?? null}
+                  profileSlug={profile.slug}
+                />
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 rounded-full border border-zinc-700 hover:border-zinc-500 bg-transparent text-zinc-50 px-7 py-4 text-base transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full border border-zinc-700 hover:border-zinc-500 bg-transparent text-zinc-50 px-6 py-3 text-sm font-medium transition-colors"
                 >
                   <ShareNetwork weight="bold" className="w-4 h-4" />
                   Partager
