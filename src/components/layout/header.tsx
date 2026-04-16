@@ -46,7 +46,7 @@ interface HeaderProps {
 
 const NAV_LINKS = [
   { href: "/annuaire", label: "Annuaire" },
-  { href: "/blog", label: "Journal" },
+  { href: "/journal", label: "Journal" },
   { href: "/institutions", label: "Institutions" },
 ];
 
