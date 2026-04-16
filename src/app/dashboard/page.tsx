@@ -30,10 +30,30 @@ const statusConfig: Record<
   string,
   { label: string; color: string; icon: typeof Clock }
 > = {
-  PENDING: { label: "En attente", color: "bg-amber-500/15 text-amber-400 border-amber-500/30", icon: Clock },
-  ACCEPTED: { label: "Acceptée", color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30", icon: CheckCircle },
-  DECLINED: { label: "Refusée", color: "bg-red-500/15 text-red-400 border-red-500/30", icon: XCircle },
-  EXPIRED: { label: "Expirée", color: "bg-zinc-800 text-zinc-400 border-zinc-700", icon: Clock },
+  PENDING: {
+    label: "En attente",
+    color:
+      "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30",
+    icon: Clock,
+  },
+  ACCEPTED: {
+    label: "Acceptée",
+    color:
+      "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30",
+    icon: CheckCircle,
+  },
+  DECLINED: {
+    label: "Refusée",
+    color:
+      "bg-red-100 text-red-700 border-red-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/30",
+    icon: XCircle,
+  },
+  EXPIRED: {
+    label: "Expirée",
+    color:
+      "bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700",
+    icon: Clock,
+  },
 };
 
 export default async function DashboardPage() {
@@ -64,7 +84,6 @@ export default async function DashboardPage() {
       profile ? prisma.experience.count({ where: { profileId: profile.id } }) : 0,
     ]);
 
-  // Tasks checklist for completion
   const tasks = profile
     ? [
         { key: "photo", label: "Photo de profil", done: !!profile.photoUrl, icon: Camera, href: "/dashboard/profil" },
@@ -96,59 +115,68 @@ export default async function DashboardPage() {
   const firstName = profile?.firstName ?? "Professionnel";
 
   const availabilityStatus = profile?.availabilityStatus ?? "UNAVAILABLE";
-  const availabilityConfig: Record<string, { label: string; color: string; dot: string }> = {
+  const availabilityConfig: Record<
+    string,
+    { label: string; color: string; dot: string }
+  > = {
     AVAILABLE: {
       label: "Disponible",
-      color: "text-emerald-400",
+      color: "text-emerald-600 dark:text-emerald-400",
       dot: "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]",
     },
     BUSY: {
       label: "Occupé",
-      color: "text-amber-400",
+      color: "text-amber-600 dark:text-amber-400",
       dot: "bg-amber-500 shadow-[0_0_0_3px_rgba(245,158,11,0.25)]",
     },
     UNAVAILABLE: {
       label: "Indisponible",
-      color: "text-zinc-400",
-      dot: "bg-zinc-500",
+      color: "text-zinc-500 dark:text-zinc-400",
+      dot: "bg-zinc-400 dark:bg-zinc-500",
     },
   };
   const avail = availabilityConfig[availabilityStatus] ?? availabilityConfig.UNAVAILABLE;
 
   return (
-    <div className="bg-zinc-950 min-h-[100dvh] text-zinc-50">
+    <div className="min-h-[100dvh]">
       <div className="container mx-auto max-w-[1280px] px-6 lg:px-10 py-10 lg:py-14 space-y-10">
         {/* Hero greeting */}
         <div>
-          <div className="eyebrow mb-4">// Espace professionnel</div>
-          <h1 className="text-display-sm">
+          <div className="text-xs uppercase tracking-[0.18em] font-mono text-amber-600 dark:text-amber-500 font-medium mb-4">
+            // Espace professionnel
+          </div>
+          <h1 className="text-3xl md:text-5xl tracking-tight font-medium">
             Bonjour{" "}
-            <span className="font-editorial text-amber-500">{firstName}.</span>
+            <span className="font-editorial text-amber-600 dark:text-amber-500">
+              {firstName}.
+            </span>
           </h1>
-          <p className="mt-4 text-lg text-zinc-400 max-w-2xl">
+          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl">
             {isComplete
               ? "Votre profil est complet. Gardez-le à jour pour maximiser votre visibilité."
               : "Complétez votre profil pour apparaître en haut de l'annuaire."}
           </p>
         </div>
 
-        {/* Completeness block — only if not complete */}
+        {/* Completeness block */}
         {profile && !isComplete && (
-          <section className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-zinc-900 to-zinc-900 p-8 lg:p-10">
+          <section className="relative overflow-hidden rounded-3xl border border-amber-200 dark:border-amber-500/30 bg-gradient-to-br from-amber-50 via-white to-white dark:from-amber-500/10 dark:via-zinc-900 dark:to-zinc-900 p-8 lg:p-10 shadow-sm dark:shadow-none">
             <div
               aria-hidden
-              className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-amber-500/20 blur-3xl"
+              className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-amber-400/20 dark:bg-amber-500/20 blur-3xl"
             />
             <div className="relative flex items-start justify-between gap-6 flex-wrap mb-6">
               <div>
-                <div className="eyebrow mb-2">// Complétez votre profil</div>
-                <h2 className="text-3xl lg:text-4xl font-medium tracking-tight">
+                <div className="text-xs uppercase tracking-[0.18em] font-mono text-amber-600 dark:text-amber-500 font-medium mb-2">
+                  // Complétez votre profil
+                </div>
+                <h2 className="text-2xl lg:text-3xl font-medium tracking-tight">
                   Profil complet à{" "}
-                  <span className="font-mono text-amber-500 tabular-nums">
+                  <span className="font-mono text-amber-600 dark:text-amber-500 tabular-nums">
                     {completionPct}%
                   </span>
                 </h2>
-                <p className="mt-2 text-sm text-zinc-400">
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                   {completedTasks} sur {totalTasks} étapes validées
                 </p>
               </div>
@@ -161,15 +189,13 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            {/* Progress bar */}
-            <div className="relative h-2 w-full rounded-full bg-zinc-800 overflow-hidden mb-8">
+            <div className="relative h-2 w-full rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden mb-8">
               <div
                 className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500"
                 style={{ width: `${completionPct}%` }}
               />
             </div>
 
-            {/* Tasks checklist */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {tasks.map((task) => {
                 const Icon = task.icon;
@@ -179,13 +205,15 @@ export default async function DashboardPage() {
                     href={task.href}
                     className={`group flex items-center gap-3 rounded-xl border px-4 py-3 transition-all ${
                       task.done
-                        ? "border-emerald-500/30 bg-emerald-500/5"
-                        : "border-zinc-800 bg-zinc-950/50 hover:border-amber-500/40 hover:bg-amber-500/5"
+                        ? "border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5"
+                        : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 hover:border-amber-300 dark:hover:border-amber-500/40 hover:bg-amber-50 dark:hover:bg-amber-500/5"
                     }`}
                   >
                     <div
                       className={`flex h-8 w-8 items-center justify-center rounded-lg shrink-0 ${
-                        task.done ? "bg-emerald-500/15 text-emerald-400" : "bg-zinc-800 text-zinc-400 group-hover:bg-amber-500/15 group-hover:text-amber-400"
+                        task.done
+                          ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/15 group-hover:text-amber-600 dark:group-hover:text-amber-400"
                       }`}
                     >
                       {task.done ? (
@@ -196,7 +224,9 @@ export default async function DashboardPage() {
                     </div>
                     <span
                       className={`text-sm font-medium flex-1 ${
-                        task.done ? "text-zinc-400 line-through" : "text-zinc-200"
+                        task.done
+                          ? "text-zinc-400 dark:text-zinc-500 line-through"
+                          : "text-zinc-700 dark:text-zinc-200"
                       }`}
                     >
                       {task.label}
@@ -204,7 +234,7 @@ export default async function DashboardPage() {
                     {!task.done && (
                       <ArrowUpRight
                         weight="bold"
-                        className="w-3.5 h-3.5 text-zinc-600 group-hover:text-amber-500 shrink-0 transition-colors"
+                        className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-600 group-hover:text-amber-500 shrink-0 transition-colors"
                       />
                     )}
                   </Link>
@@ -216,51 +246,50 @@ export default async function DashboardPage() {
 
         {/* Stats row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Views */}
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 hover:border-zinc-700 transition-colors">
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-sm dark:shadow-none">
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 border border-zinc-800">
-                <Eye weight="duotone" className="w-5 h-5 text-amber-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-zinc-950 border border-amber-200 dark:border-zinc-800">
+                <Eye weight="duotone" className="w-5 h-5 text-amber-600 dark:text-amber-500" />
               </div>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-600">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-400 dark:text-zinc-600">
                 Vues totales
               </span>
             </div>
-            <p className="mt-8 text-4xl lg:text-5xl font-medium font-mono tabular-nums text-zinc-50">
+            <p className="mt-8 text-4xl lg:text-5xl font-medium font-mono tabular-nums">
               {(profile?.viewCount ?? 0).toLocaleString("fr-FR")}
             </p>
-            <p className="mt-2 text-sm text-zinc-500">Vues depuis la création</p>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+              Vues depuis la création
+            </p>
           </div>
 
-          {/* Contact requests */}
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 hover:border-zinc-700 transition-colors">
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-sm dark:shadow-none">
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 border border-zinc-800">
-                <ChatCircle weight="duotone" className="w-5 h-5 text-amber-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-zinc-950 border border-amber-200 dark:border-zinc-800">
+                <ChatCircle weight="duotone" className="w-5 h-5 text-amber-600 dark:text-amber-500" />
               </div>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-600">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-400 dark:text-zinc-600">
                 En attente
               </span>
             </div>
-            <p className="mt-8 text-4xl lg:text-5xl font-medium font-mono tabular-nums text-zinc-50">
+            <p className="mt-8 text-4xl lg:text-5xl font-medium font-mono tabular-nums">
               {pendingCount}
             </p>
             <Link
               href="/dashboard/demandes"
-              className="mt-2 inline-flex items-center gap-1.5 text-sm text-amber-500 hover:text-amber-400 transition-colors"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
             >
               Voir les demandes
               <ArrowUpRight weight="bold" className="w-3 h-3" />
             </Link>
           </div>
 
-          {/* Availability */}
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 hover:border-zinc-700 transition-colors">
+          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-sm dark:shadow-none">
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 border border-zinc-800">
-                <CalendarBlank weight="duotone" className="w-5 h-5 text-amber-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-zinc-950 border border-amber-200 dark:border-zinc-800">
+                <CalendarBlank weight="duotone" className="w-5 h-5 text-amber-600 dark:text-amber-500" />
               </div>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-600">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-zinc-400 dark:text-zinc-600">
                 Disponibilité
               </span>
             </div>
@@ -272,7 +301,7 @@ export default async function DashboardPage() {
             </div>
             <Link
               href="/dashboard/agenda"
-              className="mt-2 inline-flex items-center gap-1.5 text-sm text-amber-500 hover:text-amber-400 transition-colors"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
             >
               Modifier
               <ArrowUpRight weight="bold" className="w-3 h-3" />
@@ -280,9 +309,11 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick actions grid */}
+        {/* Quick actions */}
         <section>
-          <div className="eyebrow mb-4">// Actions rapides</div>
+          <div className="text-xs uppercase tracking-[0.18em] font-mono text-amber-600 dark:text-amber-500 font-medium mb-4">
+            // Actions rapides
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { label: "Enrichir portfolio", icon: ImageSquare, href: "/dashboard/portfolio" },
@@ -304,12 +335,12 @@ export default async function DashboardPage() {
                   <Link
                     key={action.label}
                     href={action.href}
-                    className="group flex flex-col items-start gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 hover:border-amber-500/60 hover:bg-amber-500/5 transition-all hover:-translate-y-1"
+                    className="group flex flex-col items-start gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-amber-400 dark:hover:border-amber-500/60 hover:bg-amber-50/50 dark:hover:bg-amber-500/5 transition-all hover:-translate-y-1 shadow-sm dark:shadow-none"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950 border border-zinc-800 group-hover:border-amber-500/40 transition-colors">
-                      <Icon weight="duotone" className="w-5 h-5 text-amber-500" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-zinc-950 border border-amber-200 dark:border-zinc-800 group-hover:border-amber-400 dark:group-hover:border-amber-500/40 transition-colors">
+                      <Icon weight="duotone" className="w-5 h-5 text-amber-600 dark:text-amber-500" />
                     </div>
-                    <span className="text-sm font-medium text-zinc-200 group-hover:text-zinc-50 transition-colors">
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-zinc-50 transition-colors">
                       {action.label}
                     </span>
                   </Link>
@@ -320,25 +351,25 @@ export default async function DashboardPage() {
 
         {/* Verification status */}
         {profile && (
-          <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 flex items-center gap-4 flex-wrap">
+          <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 flex items-center gap-4 flex-wrap shadow-sm dark:shadow-none">
             <div
               className={`flex h-12 w-12 items-center justify-center rounded-xl shrink-0 ${
                 profile.verificationStatus === "VERIFIED"
-                  ? "bg-emerald-500/15 text-emerald-400"
-                  : "bg-amber-500/15 text-amber-400"
+                  ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                  : "bg-amber-100 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400"
               }`}
             >
               <SealCheck weight="duotone" className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-zinc-50">
+              <p className="font-medium text-zinc-900 dark:text-zinc-50">
                 {profile.verificationStatus === "VERIFIED"
                   ? "Profil vérifié"
                   : profile.verificationStatus === "PENDING"
                   ? "Validation en cours"
                   : "Validation rejetée"}
               </p>
-              <p className="text-sm text-zinc-400 mt-0.5">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-0.5">
                 {profile.verificationStatus === "VERIFIED"
                   ? "Votre profil est certifié et apparaît en priorité dans les résultats."
                   : profile.verificationStatus === "PENDING"
@@ -352,27 +383,35 @@ export default async function DashboardPage() {
         {/* Recent contact requests */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <div className="eyebrow">// Activité récente</div>
+            <div className="text-xs uppercase tracking-[0.18em] font-mono text-amber-600 dark:text-amber-500 font-medium">
+              // Activité récente
+            </div>
             <Link
               href="/dashboard/demandes"
-              className="text-sm text-amber-500 hover:text-amber-400 inline-flex items-center gap-1.5 transition-colors"
+              className="text-sm text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 inline-flex items-center gap-1.5 transition-colors"
             >
               Voir tout
               <ArrowUpRight weight="bold" className="w-3 h-3" />
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm dark:shadow-none">
             {recentRequests.length === 0 ? (
               <div className="text-center py-14">
-                <ChatCircle weight="thin" style={{ width: 48, height: 48 }} className="text-zinc-700 mx-auto mb-3" />
-                <p className="text-zinc-400">Aucune demande de contact pour le moment.</p>
-                <p className="text-sm text-zinc-500 mt-1">
+                <ChatCircle
+                  weight="thin"
+                  style={{ width: 48, height: 48 }}
+                  className="text-zinc-300 dark:text-zinc-700 mx-auto mb-3"
+                />
+                <p className="text-zinc-600 dark:text-zinc-400">
+                  Aucune demande de contact pour le moment.
+                </p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-500 mt-1">
                   Complétez votre profil pour augmenter vos chances.
                 </p>
               </div>
             ) : (
-              <ul className="divide-y divide-zinc-800">
+              <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
                 {recentRequests.map((req) => {
                   const cfg = statusConfig[req.status] ?? statusConfig.PENDING;
                   const StatusIcon = cfg.icon;
@@ -380,8 +419,11 @@ export default async function DashboardPage() {
                     ? `${req.sender.profile.firstName} ${req.sender.profile.lastName}`
                     : req.sender.email;
                   return (
-                    <li key={req.id} className="flex items-center gap-4 p-5 hover:bg-zinc-950/40 transition-colors">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/15 text-amber-400 text-sm font-medium shrink-0">
+                    <li
+                      key={req.id}
+                      className="flex items-center gap-4 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-950/40 transition-colors"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 text-sm font-medium shrink-0">
                         {senderName
                           .split(" ")
                           .map((n) => n[0])
@@ -391,8 +433,10 @@ export default async function DashboardPage() {
                           .toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate text-zinc-50">{req.subject}</p>
-                        <p className="text-xs text-zinc-500 mt-0.5 font-mono">
+                        <p className="text-sm font-medium truncate text-zinc-900 dark:text-zinc-50">
+                          {req.subject}
+                        </p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-0.5 font-mono">
                           {senderName} ·{" "}
                           {formatDistanceToNow(new Date(req.createdAt), {
                             addSuffix: true,
