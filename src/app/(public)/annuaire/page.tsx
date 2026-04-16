@@ -263,7 +263,7 @@ export default async function AnnuairePage(props: AnnuairePageProps) {
       </section>
 
       {/* ── Sticky filters bar ── */}
-      <div className="sticky top-20 z-40 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800">
+      <div className="sticky top-20 z-30 bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800">
         <div className="container mx-auto px-6 max-w-[1480px] py-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
             {/* DISPO NOW — leading chip */}

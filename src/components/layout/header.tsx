@@ -58,10 +58,25 @@ export function Header({ user }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
+    let rafId = 0;
+    let lastScrolled = window.scrollY > 8;
+    setScrolled(lastScrolled);
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        const next = window.scrollY > 8;
+        if (next !== lastScrolled) {
+          lastScrolled = next;
+          setScrolled(next);
+        }
+        rafId = 0;
+      });
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const handleSignOut = async () => {
@@ -95,8 +110,8 @@ export function Header({ user }: HeaderProps) {
           <Logo size="md" />
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+        {/* Desktop Navigation — flex-1 for clean clickable zones (no absolute overlay) */}
+        <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
           {NAV_LINKS.map((link) => {
             const active =
               link.href === "/"
